@@ -4,6 +4,7 @@
 const fs = require("fs");
 const { randomUUID } = require("crypto");
 const { loadConfig, saveConfig, getConfigPath, ensureDirs } = require("./config");
+const path = require("path");
 const { activate } = require("./activate");
 const { startAgent } = require("./agent");
 
@@ -35,6 +36,11 @@ async function main() {
         console.error(
           "[agent] Not activated and no activationCode in config",
         );
+        console.error("[agent] Config file: " + getConfigPath());
+        console.error(
+          "[agent] Add activationCode or copy config.example.json to:",
+        );
+        console.error("         " + path.join(getConfigDir(), "config.json"));
         process.exit(1);
       }
       await activate(config);

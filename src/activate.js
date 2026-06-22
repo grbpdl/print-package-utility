@@ -26,19 +26,35 @@ async function activate(config) {
     platform: process.platform,
   });
 
+  const body = res.data || {};
+  const payload =
+    body.data != null && typeof body.data === "object" ? body.data : body;
+  const franchiseId = payload.franchiseId ?? payload.franchise_id;
+
+  if (!franchiseId) {
+    throw new Error(
+      "Activation response missing franchiseId: " + JSON.stringify(body),
+    );
+  }
+
   const activated = {
     backendUrl: config.backendUrl,
-    franchiseId: res.data.franchiseId,
+    franchiseId,
     agentId,
     activatedAt: new Date().toISOString(),
   };
 
-  if (res.data.printerGroup) {
-    activated.printerGroup = res.data.printerGroup;
+  if (payload.franchiseName) {
+    activated.franchiseName = payload.franchiseName;
+  }
+
+  if (payload.printerGroup ?? payload.printer_group) {
+    activated.printerGroup = payload.printerGroup ?? payload.printer_group;
   }
 
   saveConfig(activated);
-  console.log("[agent] Activated — franchise " + activated.franchiseId);
+  const franchiseLabel = activated.franchiseName || activated.franchiseId;
+  console.log("[agent] Activated — franchise " + franchiseLabel);
 
   startAgent(activated);
 }

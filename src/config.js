@@ -28,11 +28,26 @@ function getConfigDir() {
   return path.join(os.homedir(), ".config", "syanko");
 }
 
+function getPortableConfigPath() {
+  return path.join(path.dirname(process.execPath), "config.json");
+}
+
 function getConfigPath() {
   if (process.env.SYANKO_CONFIG) {
     return path.resolve(process.env.SYANKO_CONFIG);
   }
-  return path.join(getConfigDir(), "config.json");
+
+  const osConfig = path.join(getConfigDir(), "config.json");
+  if (fs.existsSync(osConfig)) {
+    return osConfig;
+  }
+
+  const portableConfig = getPortableConfigPath();
+  if (fs.existsSync(portableConfig)) {
+    return portableConfig;
+  }
+
+  return osConfig;
 }
 
 function getLogDir() {
