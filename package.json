@@ -1,0 +1,43 @@
+{
+  "name": "syanko-agent",
+  "version": "1.0.0",
+  "description": "Syanko print agent — activates once, then connects and prints via TCP",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:dev": "SYANKO_CONFIG=./config.dev.json node src/index.js",
+    "mock": "node scripts/mock-backend.js",
+    "test": "node scripts/test-smoke.js",
+    "test:binary": "node scripts/test-binary-e2e.js",
+    "build:win": "pkg src/index.js --targets node18-win-x64 --output dist/syanko-agent.exe",
+    "build:linux": "pkg src/index.js --targets node18-linux-x64 --output dist/syanko-agent",
+    "build:mac": "pkg src/index.js --targets node18-macos-x64 --output dist/syanko-agent-macos",
+    "build": "npm run build:win && npm run build:linux && npm run build:mac",
+    "build:release": "node scripts/build-release.js",
+    "build:release:linux": "node scripts/build-release.js linux-x64",
+    "build:release:win": "node scripts/build-release.js win-x64",
+    "build:release:mac": "node scripts/build-release.js macos-x64"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1",
+    "socket.io": "^4.8.1"
+  },
+  "pkg": {
+    "assets": ["package.json"],
+    "scripts": [
+      "src/index.js",
+      "src/config.js",
+      "src/activate.js",
+      "src/agent.js",
+      "src/print.js"
+    ]
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
